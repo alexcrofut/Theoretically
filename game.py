@@ -1,54 +1,32 @@
+import pygame
+
+
 class Game:
-    def __init__(self, id):
-        self.p1Went = False
-        self.p2Went = False
-        self.ready = False
-        self.id = id
-        self.moves = [None, None]
-        self.wins = [0, 0]
-        self.ties = 0
+    def __init__(self):
+        pygame.init()
+        width, height = (389, 489)
+        self.screen = pygame.display.set_mode((width, height))
+        pygame.display.set_caption("Theoretically")
+        self.clock = pygame.time.Clock()
+        # set up the board as 6 rows of 5 columns over 3 theaters (space, air, and land)
+        self.board = [[[None for x in range(5)] for y in range(6)] for z in range(3)]
 
-    def get_player_move(self, p):
-        """
-        :param p: the player number [0, 1]
-        :return: the players move
-        """
+    def draw_board(self):
+        for x in range(5):
+            for y in range(6):
+                pygame.draw.rect(self.screen, (255, 255, 255), (50 + 50 * x, 50 + 50 * y, 50, 50), 1)
 
-        return self.moves[p]
+    def update(self):
+        # sleep to make the game 60 fps
+        self.clock.tick(60)
+        # clear the screen
+        self.screen.fill(0)
+        self.draw_board()
 
-    def play_move(self, player, move):
-        self.moves[player] = move
-        if player == 0:
-            self.p1Went = True
-        else:
-            self.p2Went = True
+        for event in pygame.event.get():
+            # quit if the quit button was pressed
+            if event.type == pygame.QUIT:
+                exit()
 
-    def connected(self):
-        return self.ready
-
-    def both_went(self):
-        return self.p1Went and self.p2Went
-
-    def winner(self):
-        p1 = self.moves[0].upper()[0]
-        p2 = self.moves[1].upper()[0]
-
-        winner = -1
-        if p1 == "R" and p2 == "S":
-            winner = 0
-        elif p1 == "S" and p2 == "R":
-            winner = 1
-        elif p1 == "P" and p2 == "R":
-            winner = 0
-        elif p1 == "R" and p2 == "P":
-            winner = 1
-        elif p1 == "S" and p2 == "P":
-            winner = 0
-        elif p1 == "P" and p2 == "S":
-            winner = 1
-
-        return winner
-
-    def reset_went(self):
-        self.p1Went = False
-        self.p2Went = False
+        # update the screen
+        pygame.display.flip()
